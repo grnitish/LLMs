@@ -1,0 +1,27 @@
+@echo off
+setlocal enabledelayedexpansion
+
+:: Set Base Directory
+set BASE_DIR=C:\path\to\Parkland\Archive
+
+:: Get previous month and year
+for /f "tokens=2-4 delims=/ " %%a in ('wmic Path Win32_LocalTime Get Month^,Year /Format:table ^| findstr /r [0-9]') do (
+    set /a MONTH=%%a-1
+    if !MONTH! lss 1 set /a MONTH=12 & set /a YEAR=%%b-1
+    for /f %%m in ('powershell -Command "[CultureInfo]::InvariantCulture.DateTimeFormat.GetMonthName(!MONTH!)"') do set MONTH_NAME=%%m
+)
+
+set "FOLDER_NAME=%MONTH_NAME%%YEAR%Parkland"
+set "ZIP_FILE=%BASE_DIR%\%FOLDER_NAME%.zip"
+
+:: Create folder
+mkdir "%BASE_DIR%\%FOLDER_NAME%"
+
+:: Move matching files
+for %%F in ("%BASE_DIR%\PRK*%DATE:~0,2%%DATE:~3,2%%DATE:~6,4%*") do move "%%F" "%BASE_DIR%\%FOLDER_NAME%"
+
+:: Zip the folder
+powershell Compress-Archive -Path "%BASE_DIR%\%FOLDER_NAME%" -DestinationPath "%ZIP_FILE%"
+
+:: Delete original folder
+rmdir /s /q "%BASE_DIR%\%FOLDER_NAME%"

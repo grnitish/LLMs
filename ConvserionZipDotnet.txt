@@ -7,11 +7,13 @@ class Program
 {
     static void Main()
     {
-        string baseDir = @"C:\path\to\Parkland\Archive"; // Change this to the actual path
+        string baseDir = "C:\\Users\\grnit\\OneDrive\\Documents\\Sample Zip Conversion\\Archive";
+
 
         // Get last month’s name and year
         DateTime lastMonth = DateTime.Now.AddMonths(-1);
-        string monthYear = lastMonth.ToString("MMM-yyyy", CultureInfo.InvariantCulture);
+        Console.WriteLine(lastMonth);
+        string monthYear = lastMonth.ToString("MMyyyy");
         string folderName = $"{monthYear}Parkland";
         string folderPath = Path.Combine(baseDir, folderName);
         string zipFilePath = Path.Combine(baseDir, $"{folderName}.zip");
@@ -32,7 +34,8 @@ class Program
             foreach (string file in files)
             {
                 string fileName = Path.GetFileName(file);
-                if (fileName.Contains(lastMonth.ToString("ddMMyyyy")))
+                Console.WriteLine(fileName);
+                if (fileName.Contains(lastMonth.ToString("yyyyMM")))
                 {
                     string destination = Path.Combine(folderPath, fileName);
                     File.Move(file, destination);
